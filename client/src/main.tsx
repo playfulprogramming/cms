@@ -1,4 +1,13 @@
-import { render } from 'preact'
-import './styles/global.scss'
+import { render } from "preact";
+import "./styles/global.scss";
+import { SignInWithGitHub } from "./components/home/SignInWithGitHub";
 
-render(<div>Hi</div>, document.getElementById('app')!)
+render(
+  <div>
+	Hi
+	<p>
+		<SignInWithGitHub />
+	</p>
+  </div>,
+  document.getElementById("app")!
+);

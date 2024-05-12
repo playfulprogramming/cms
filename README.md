@@ -61,6 +61,7 @@ docker compose up --wait
 To run the API server:
 ```sh
 cd api
+./gradlew flywayMigrate # runs any database migrations
 ./gradlew run # (or use the Run button in IntelliJ)
 ```
 
