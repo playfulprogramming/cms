@@ -1,0 +1,21 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "preact": "^10.19.6"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "sass": "^1.77.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  },
+  "packageManager": "pnpm@9.1.0+sha256.22e36fba7f4880ecf749a5ca128b8435da085ecd49575e7fb9e64d6bf4fad394"
+}

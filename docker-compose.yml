@@ -1,0 +1,17 @@
+name: unicorn-utterances-cms
+
+services:
+  pgsql:
+    image: postgres:16.3-alpine3.18
+    env_file:
+      - .env
+    volumes:
+      - ./.data/pgsql:/var/lib/postgresql/data
+      - ./.data/pgsql_backups:/backups
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
