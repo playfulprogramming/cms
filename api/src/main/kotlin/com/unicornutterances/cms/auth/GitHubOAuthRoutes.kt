@@ -10,6 +10,7 @@ import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import io.ktor.util.*
 import org.koin.ktor.ext.inject
 
 const val AUTH_SESSION = "auth-session"
@@ -20,7 +21,13 @@ fun Application.configureGitHubOAuth() {
     val gitHubOAuthService: GitHubOAuthService by inject()
 
     install(Sessions) {
-        cookie<SessionData>(AUTH_SESSION)
+        val secretEncryptKey = hex(env.secretEncryptKey)
+        val secretSignKey = hex(env.secretSignKey)
+        cookie<SessionData>(AUTH_SESSION) {
+            cookie.httpOnly = true
+            cookie.secure = env.apiUrl.startsWith("https://")
+            transform(SessionTransportTransformerEncrypt(secretEncryptKey, secretSignKey))
+        }
     }
 
     authentication {
@@ -29,7 +36,6 @@ fun Application.configureGitHubOAuth() {
                 val isValid = gitHubOAuthService.verifySession(session)
                 if (isValid) session else null
             }
-            challenge("/auth/github/login")
         }
         oauth(AUTH_GITHUB) {
             urlProvider = { "${env.apiUrl}/auth/github/callback" }
@@ -67,6 +73,16 @@ fun Application.configureGitHubOAuth() {
                     // Redirect the user back to the app
                     call.respondRedirect(env.clientUrl)
                 }
+            }
+        }
+
+        authenticate(AUTH_SESSION) {
+            get("/auth/user") {
+                val session = call.principal<SessionData>()
+                    ?: throw BadRequestException("Missing SessionData principal")
+
+                val user = gitHubOAuthService.getSessionUser(session)
+                call.respond(user)
             }
         }
 

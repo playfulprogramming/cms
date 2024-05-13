@@ -1,13 +1,13 @@
 import { render } from "preact";
 import "./styles/global.scss";
-import { SignInWithGitHub } from "./components/home/SignInWithGitHub";
+import { GetStarted } from "./components/home/GetStarted";
+import { QueryClientWrapper } from "./queries/QueryClientWrapper";
 
 render(
-  <div>
-	Hi
-	<p>
-		<SignInWithGitHub />
-	</p>
-  </div>,
-  document.getElementById("app")!
+	<QueryClientWrapper>
+		<div>
+			<GetStarted />
+		</div>
+	</QueryClientWrapper>,
+	document.getElementById("app")!
 );

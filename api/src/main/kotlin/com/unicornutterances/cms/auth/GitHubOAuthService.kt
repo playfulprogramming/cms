@@ -5,6 +5,7 @@ import com.unicornutterances.cms.github.client.data.GHUserToken
 import com.unicornutterances.cms.sql.Database
 import com.unicornutterances.cms.sql.GitHubUser
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.codec.binary.Hex
@@ -43,6 +44,21 @@ class GitHubOAuthService(
 
         // If they exist, return a session id
         return user != null && verifySessionId(session.sessionId, user.session_id_hash)
+    }
+
+    suspend fun getSessionUser(session: SessionData): AuthUserResponse {
+        val user = withContext(Dispatchers.IO) {
+            // Attempt to find the user tied to the session
+            database.gitHubUserQueries.getById(session.userId)
+                .executeAsOneOrNull()
+                ?: throw NotFoundException()
+        }
+
+        return AuthUserResponse(
+            id = user.id,
+            login = user.login,
+            name = user.name,
+        )
     }
 
     suspend fun handleOAuthCallback(
