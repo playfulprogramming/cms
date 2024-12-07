@@ -28,6 +28,17 @@ services:
       MINIO_ROOT_PASSWORD: ${S3_KEY_SECRET}
     command: server --console-address ":9001" /data
 
+  worker:
+    build: worker
+    env_file:
+      - .env
+    environment:
+      S3_ENDPOINT: http://minio:9000
+      POSTGRES_URL: postgresql://pgsql:5432/unicorn
+    depends_on:
+      - minio
+      - pgsql
+
 
 volumes:
   minio_storage: {}

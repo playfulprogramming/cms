@@ -1,5 +1,6 @@
 import sql from "./sql";
 import { urlMetadataTask } from "./url-metadata/task";
+import { setTimeout } from "node:timers/promises";
 
 const BATCH_SIZE = 1;
 
@@ -10,7 +11,7 @@ const tasks: Record<string, (input: any) => Promise<any>> = {
 	["url-metadata"]: urlMetadataTask,
 };
 
-while (hasRequests) {
+while (true) {
 	await sql.begin(async tx => {
 		const requests = await tx`SELECT * FROM TaskRequests FOR UPDATE SKIP LOCKED LIMIT ${BATCH_SIZE}`;
 		hasRequests = requests.length > 0;
@@ -39,6 +40,14 @@ while (hasRequests) {
 			await tx`INSERT INTO TaskResults (task, id, output) VALUES (${taskName}, ${id}, ${result})`;
 		}));
 	});
+
+	// WORKER_EXIT_WHEN_DONE will be used in production, to avoid running when no tasks are needed
+	// - workers are then manually invoked by the fly.io API on any incoming request
+	if (process.env.WORKER_EXIT_WHEN_DONE && !hasRequests) {
+		break;
+	} else {
+		await setTimeout(1000);
+	}
 }
 
 await sql.end();

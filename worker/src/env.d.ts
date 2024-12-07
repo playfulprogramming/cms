@@ -1,5 +1,9 @@
 namespace NodeJS {
 	interface ProcessEnv {
+		NODE_ENV: "production" | string;
+
+		WORKER_EXIT_WHEN_DONE: boolean;
+
 		POSTGRES_USER: string;
 		POSTGRES_PASSWORD: string;
 		POSTGRES_URL: string;

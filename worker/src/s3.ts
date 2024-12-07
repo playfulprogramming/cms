@@ -13,6 +13,11 @@ export const S3 = new S3Client({
 });
 
 export async function createBucket(name: string): Promise<string> {
+	// If we're running in production, assume that buckets were configured manually
+	if (process.env.NODE_ENV === "production")
+		return name;
+
+	// Otherwise, set up buckets for local usage
 	try {
 		await S3.send(new CreateBucketCommand({
 			Bucket: name,
