@@ -1,8 +1,6 @@
 package com.playfulprogramming.cms
 
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
-import com.playfulprogramming.cms.auth.authModule
-import com.playfulprogramming.cms.auth.configureGitHubOAuth
 import com.playfulprogramming.cms.config.EnvConfig
 import com.playfulprogramming.cms.config.EnvConfigImpl
 import com.playfulprogramming.cms.plugins.configureHTTP
@@ -40,12 +38,10 @@ private val koinModule = module {
 fun Application.module() {
     install(Koin) {
         modules(koinModule)
-        modules(authModule)
     }
 
     configureHTTP()
     configureMonitoring()
-    configureGitHubOAuth()
 
     routing {
         get("/") {
