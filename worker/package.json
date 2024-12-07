@@ -1,0 +1,35 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "packageManager": "pnpm@9.15.0",
+  "type": "module",
+  "scripts": {
+    "dev": "DOTENV_CONFIG_PATH=../.env tsx -r dotenv/config src/index.ts",
+    "lint": "eslint \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\"",
+    "lint:fix": "eslint --cache --fix \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.16.0",
+    "@types/hast": "^3.0.4",
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "dotenv": "^16.4.7",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0"
+  },
+  "dependencies": {
+    "hast-util-from-html": "^2.0.3",
+    "postgres": "^3.4.5",
+    "unist-util-find": "^3.0.0"
+  }
+}
