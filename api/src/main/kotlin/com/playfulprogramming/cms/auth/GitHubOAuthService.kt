@@ -1,9 +1,9 @@
-package com.unicornutterances.cms.auth
+package com.playfulprogramming.cms.auth
 
-import com.unicornutterances.cms.github.client.GitHubClient
-import com.unicornutterances.cms.github.client.data.GHUserToken
-import com.unicornutterances.cms.sql.Database
-import com.unicornutterances.cms.sql.GitHubUser
+import com.playfulprogramming.cms.github.client.GitHubClient
+import com.playfulprogramming.cms.github.client.data.GHUserToken
+import com.playfulprogramming.cms.sql.Database
+import com.playfulprogramming.cms.sql.GitHubUser
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import kotlinx.coroutines.Dispatchers

@@ -1,0 +1,25 @@
+CREATE TABLE GitHubUser (
+    id INTEGER NOT NULL PRIMARY KEY,
+    login TEXT NOT NULL,
+    name TEXT NOT NULL,
+    token TEXT NOT NULL,
+    token_expiry TIMESTAMPTZ NOT NULL,
+    refresh_token TEXT,
+    refresh_token_expiry TIMESTAMPTZ,
+    session_id_hash TEXT NOT NULL
+);
+
+CREATE TABLE UnicornInfo (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    github_id INTEGER NOT NULL REFERENCES GitHubUser(id),
+    username TEXT NOT NULL UNIQUE,
+    content TEXT NOT NULL,
+    profile_img TEXT
+);
+
+CREATE TABLE PostInfo (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    github_id INTEGER NOT NULL REFERENCES GitHubUser(id),
+    slug TEXT NOT NULL UNIQUE,
+    content TEXT NOT NULL
+);

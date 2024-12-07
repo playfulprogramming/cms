@@ -1,10 +1,10 @@
-package com.unicornutterances.cms.github.client.data
+package com.playfulprogramming.cms.auth
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GHUser(
+data class AuthUserResponse(
     val id: Int,
     val login: String,
-    val name: String?,
+    val name: String,
 )

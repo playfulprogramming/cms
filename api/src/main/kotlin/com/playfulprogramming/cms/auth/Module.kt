@@ -1,7 +1,7 @@
-package com.unicornutterances.cms.auth
+package com.playfulprogramming.cms.auth
 
-import com.unicornutterances.cms.github.client.GitHubClient
-import com.unicornutterances.cms.github.client.GitHubClientImpl
+import com.playfulprogramming.cms.github.client.GitHubClient
+import com.playfulprogramming.cms.github.client.GitHubClientImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

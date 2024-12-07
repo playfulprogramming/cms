@@ -1,4 +1,4 @@
-package com.unicornutterances.cms.auth
+package com.playfulprogramming.cms.auth
 
 import io.ktor.server.auth.*
 

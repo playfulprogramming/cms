@@ -1,13 +1,13 @@
-package com.unicornutterances.cms
+package com.playfulprogramming.cms
 
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
-import com.unicornutterances.cms.auth.authModule
-import com.unicornutterances.cms.auth.configureGitHubOAuth
-import com.unicornutterances.cms.config.EnvConfig
-import com.unicornutterances.cms.config.EnvConfigImpl
-import com.unicornutterances.cms.plugins.configureHTTP
-import com.unicornutterances.cms.plugins.configureMonitoring
-import com.unicornutterances.cms.sql.Database
+import com.playfulprogramming.cms.auth.authModule
+import com.playfulprogramming.cms.auth.configureGitHubOAuth
+import com.playfulprogramming.cms.config.EnvConfig
+import com.playfulprogramming.cms.config.EnvConfigImpl
+import com.playfulprogramming.cms.plugins.configureHTTP
+import com.playfulprogramming.cms.plugins.configureMonitoring
+import com.playfulprogramming.cms.sql.Database
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import io.ktor.server.engine.*

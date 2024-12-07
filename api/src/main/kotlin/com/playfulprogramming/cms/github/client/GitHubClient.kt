@@ -1,7 +1,7 @@
-package com.unicornutterances.cms.github.client
+package com.playfulprogramming.cms.github.client
 
-import com.unicornutterances.cms.github.client.data.GHUser
-import com.unicornutterances.cms.github.client.data.GHUserToken
+import com.playfulprogramming.cms.github.client.data.GHUser
+import com.playfulprogramming.cms.github.client.data.GHUserToken
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*

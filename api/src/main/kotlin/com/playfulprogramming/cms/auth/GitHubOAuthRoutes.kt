@@ -1,6 +1,6 @@
-package com.unicornutterances.cms.auth
+package com.playfulprogramming.cms.auth
 
-import com.unicornutterances.cms.config.EnvConfig
+import com.playfulprogramming.cms.config.EnvConfig
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.http.*

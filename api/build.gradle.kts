@@ -6,11 +6,11 @@ plugins {
     alias(libs.plugins.flyway)
 }
 
-group = "com.unicornutterances"
+group = "com.playfulprogramming"
 version = "0.0.1"
 
 application {
-    mainClass.set("com.unicornutterances.cms.ApplicationKt")
+    mainClass.set("com.playfulprogramming.cms.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

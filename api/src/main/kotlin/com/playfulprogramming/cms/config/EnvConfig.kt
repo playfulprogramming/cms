@@ -1,4 +1,4 @@
-package com.unicornutterances.cms.config
+package com.playfulprogramming.cms.config
 
 interface EnvConfig {
     val apiUrl: String

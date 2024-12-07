@@ -1,4 +1,4 @@
-package com.unicornutterances.cms.plugins
+package com.playfulprogramming.cms.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
