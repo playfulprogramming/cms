@@ -1,4 +1,4 @@
-rootProject.name = "com.unicorn-utterances.unicorn-utterances-cms"
+rootProject.name = "com.playfulprogramming.cms"
 
 dependencyResolutionManagement {
     versionCatalogs {

@@ -6,6 +6,8 @@ import com.playfulprogramming.cms.config.EnvConfigImpl
 import com.playfulprogramming.cms.plugins.configureHTTP
 import com.playfulprogramming.cms.plugins.configureMonitoring
 import com.playfulprogramming.cms.sql.Database
+import com.playfulprogramming.cms.tasks.configureTaskRoutes
+import com.playfulprogramming.cms.tasks.tasksModule
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -37,7 +39,7 @@ private val koinModule = module {
 
 fun Application.module() {
     install(Koin) {
-        modules(koinModule)
+        modules(koinModule, tasksModule)
     }
 
     configureHTTP()
@@ -47,5 +49,7 @@ fun Application.module() {
         get("/") {
             call.respondText("Hello World!")
         }
+
+        configureTaskRoutes()
     }
 }

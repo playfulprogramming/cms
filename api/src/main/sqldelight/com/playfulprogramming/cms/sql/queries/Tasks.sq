@@ -1,0 +1,5 @@
+insertRequest:
+INSERT INTO TaskRequests (id, input) VALUES (?, ?) ON CONFLICT DO NOTHING;
+
+getResultById:
+SELECT * FROM TaskResults WHERE id = ? LIMIT 1;
