@@ -34,10 +34,10 @@ export function getPageTitle(srcHast: Root) {
 	const title =
 		titleContentEl?.type === "text" ? titleContentEl.value : undefined;
 
-	return title;
+	return title?.trim();
 }
 
-export function getOpenGraphImage(srcHast: Root): string | undefined {
+export async function getOpenGraphImage(src: URL, srcHast: Root): Promise<URL> {
 	const metaNames = ["twitter:image", "og:image"];
 	const metaNode = find<Element>(
 		srcHast,
@@ -46,9 +46,9 @@ export function getOpenGraphImage(srcHast: Root): string | undefined {
 			e.tagName === "meta" &&
 			metaNames.includes(e.properties.property + ""),
 	);
-	if (!metaNode) return undefined;
+	if (!metaNode) throw Error("No image metadata found");
 
-	return metaNode.properties.content + "";
+	return new URL(metaNode.properties.content + "", src);
 }
 
 export function escapeHtml(unsafe: string) {
