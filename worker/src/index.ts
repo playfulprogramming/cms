@@ -15,10 +15,10 @@ while (hasRequests) {
 		const requests = await tx`SELECT * FROM TaskRequests FOR UPDATE SKIP LOCKED LIMIT ${BATCH_SIZE}`;
 		hasRequests = requests.length > 0;
 
-		for (const request of requests) {
-			const taskId = String(request.id);
-			const taskName = taskId.split("/").at(0);
-			if (!taskName) continue;
+		await Promise.all(requests.map(async request => {
+			console.log(request);
+			const taskName = String(request.task);
+			const id = String(request.id);
 
 			const task = tasks[taskName];
 
@@ -27,15 +27,18 @@ while (hasRequests) {
 			if (task) {
 				result = await task(request.input)
 					.catch(e => {
-						console.error(`Error while processing task ${taskId}`, e);
+						console.error(`Error while processing task ${id}`, e);
 						return null;
 					});
 			} else {
 				result = null;
 			}
 
-			await tx`DELETE FROM TaskRequests WHERE id=${taskId}`;
-			await tx`INSERT INTO TaskResults (id, output) VALUES (${taskId}, ${result})`;
-		}
+			console.log("result", result);
+			await tx`DELETE FROM TaskRequests WHERE task=${taskName} AND id=${id}`;
+			await tx`INSERT INTO TaskResults (task, id, output) VALUES (${taskName}, ${id}, ${result})`;
+		}));
 	});
 }
+
+await sql.end();

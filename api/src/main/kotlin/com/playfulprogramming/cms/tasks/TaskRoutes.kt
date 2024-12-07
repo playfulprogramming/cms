@@ -9,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.apache.commons.codec.digest.DigestUtils
@@ -16,6 +17,12 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.ktor.ext.inject
+
+@OptIn(ExperimentalSerializationApi::class)
+private val json = Json {
+    encodeDefaults = true
+    explicitNulls = false
+}
 
 private inline fun <reified Request: Any, reified Response: Any> Routing.declareTaskRoute(
     name: String,
@@ -26,14 +33,15 @@ private inline fun <reified Request: Any, reified Response: Any> Routing.declare
     post("/tasks/$name") {
         val request: Request = call.receive()
         val result = taskService.getOrCreate(
-            id = "$name/${requestToId(request)}",
-            data = Json.encodeToJsonElement(request),
+            task = name,
+            id = requestToId(request),
+            data = json.encodeToJsonElement(request),
         )
         when {
             result == null -> call.respond(HttpStatusCode.Accepted)
             result.output == null -> call.respond(HttpStatusCode.NotFound)
             else -> call.respond(
-                Json.decodeFromString<Response>(result.output)
+                json.decodeFromString<Response>(result.output)
             )
         }
     }

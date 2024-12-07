@@ -14,7 +14,7 @@ interface UrlMetadataOutput {
 
 export async function urlMetadataTask(input: UrlMetadataInput): Promise<UrlMetadataOutput> {
 	const url = new URL(input.url);
-	const root = await fetchPageHtml(input.url);
+	const root = await fetchPageHtml(url);
 	if (!root) throw Error("Unable to fetch page HTML");
 
 	const title = getPageTitle(root);

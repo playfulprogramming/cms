@@ -19,16 +19,11 @@ export async function fetchAsBrowser(input: string | URL, init?: RequestInit) {
 	return response;
 }
 
-export async function fetchPageHtml(src: string): Promise<Root | null> {
+export async function fetchPageHtml(src: URL): Promise<Root | null> {
 	const srcHTML = await fetchAsBrowser(src)
-		.then(async (r) => await r.text())
-		.catch(() => null);
-
-	// if fetch fails...
-	if (!srcHTML) return null;
+		.then((r) => r.text());
 
 	const srcHast = fromHtml(srcHTML);
-
 	return srcHast;
 }
 

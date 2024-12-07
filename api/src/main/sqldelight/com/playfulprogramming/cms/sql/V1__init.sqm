@@ -1,9 +1,13 @@
 CREATE TABLE TaskRequests(
-    id TEXT NOT NULL PRIMARY KEY,
-    input JSONB NOT NULL
+    task TEXT NOT NULL,
+    id TEXT NOT NULL,
+    input JSONB NOT NULL,
+    PRIMARY KEY (task, id)
 );
 
 CREATE TABLE TaskResults(
-    id TEXT NOT NULL PRIMARY KEY,
-    output JSONB
+    task TEXT NOT NULL,
+    id TEXT NOT NULL,
+    output JSONB,
+    PRIMARY KEY (task, id)
 );
