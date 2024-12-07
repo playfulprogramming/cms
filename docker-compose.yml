@@ -39,6 +39,17 @@ services:
       - minio
       - pgsql
 
+  api:
+    build: api
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: postgresql://pgsql:5432/unicorn
+    ports:
+      - "8080:8080"
+    depends_on:
+      - pgsql
+
 
 volumes:
   minio_storage: {}

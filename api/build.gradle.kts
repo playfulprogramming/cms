@@ -24,12 +24,14 @@ java {
 
 // Read values from the root .env file
 val env = file("../.env")
-    .readLines()
-    .filter { it.contains('=') && !it.startsWith('#') }
-    .associate {
+    .takeIf { it.exists() }
+    ?.readLines()
+    ?.filter { it.contains('=') && !it.startsWith('#') }
+    ?.associate {
         val (key, value) = it.split('=')
         key to value.removePrefix("\"").removeSuffix("\"")
     }
+    ?: emptyMap()
 
 tasks.run.configure {
     environment.putAll(env)
