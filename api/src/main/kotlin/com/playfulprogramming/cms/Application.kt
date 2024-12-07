@@ -6,21 +6,18 @@ import com.playfulprogramming.cms.config.EnvConfigImpl
 import com.playfulprogramming.cms.plugins.configureHTTP
 import com.playfulprogramming.cms.plugins.configureMonitoring
 import com.playfulprogramming.cms.sql.Database
-import com.playfulprogramming.cms.tasks.configureTaskRoutes
 import com.playfulprogramming.cms.tasks.tasksModule
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::configureApplication)
         .start(wait = true)
 }
 
@@ -37,19 +34,17 @@ private val koinModule = module {
     }
 }
 
-fun Application.module() {
+fun Application.configureApplication() {
     install(Koin) {
-        modules(koinModule, tasksModule)
+        modules(
+            koinModule,
+            tasksModule,
+            module {
+                single { this@configureApplication }
+            },
+        )
     }
 
     configureHTTP()
     configureMonitoring()
-
-    routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-
-        configureTaskRoutes()
-    }
 }

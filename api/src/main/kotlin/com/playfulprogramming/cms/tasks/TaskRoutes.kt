@@ -7,17 +7,16 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.apache.commons.codec.digest.DigestUtils
+import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.ktor.ext.inject
 import java.net.URI
 
-@OptIn(ExperimentalSerializationApi::class)
 private val json = Json {
     encodeDefaults = true
     explicitNulls = false
@@ -45,60 +44,66 @@ private suspend inline fun <reified Request: Any, reified Response: Any> invokeT
     }
 }
 
-fun Routing.configureTaskRoutes() {
-    val taskService by inject<TaskService>()
-    val env by inject<EnvConfig>()
+class TaskRoutes(
+    private val taskService: TaskService,
+    private val env: EnvConfig,
+    application: Application,
+) {
+    init {
+        application.routing {
+            post("/tasks/url-metadata") {
+                val request: UrlMetadataRequest = call.receive()
+                val url = URI.create(request.url)
 
-    post("/tasks/url-metadata") {
-        val request: UrlMetadataRequest = call.receive()
-        val url = URI.create(request.url)
+                // remove any query/fragment or casing from the URL
+                val normalizedUrl = URI(url.scheme.lowercase(), url.host.lowercase(), url.path, null)
+                val normalizedRequest = request.copy(url = normalizedUrl.toString())
 
-        // remove any query/fragment or casing from the URL
-        val normalizedUrl = URI(url.scheme.lowercase(), url.host.lowercase(), url.path, "")
-        val normalizedRequest = request.copy(url = normalizedUrl.toString())
-
-        val task = invokeTask<UrlMetadataRequest, UrlMetadataResponse>(
-            taskService = taskService,
-            task = "url-metadata",
-            id = DigestUtils.md5Hex(normalizedRequest.url),
-            request = normalizedRequest,
-        )
-
-        when (task) {
-            is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
-            is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
-            is TaskResult.Success -> call.respond(
-                UrlMetadataResponse(
-                    title = task.result.title,
-                    icon = task.result.icon?.let { "${env.s3PublicUrl}/remote-icons/$it" },
-                    banner = task.result.banner?.let { "${env.s3PublicUrl}/remote-banners/$it" },
+                val task = invokeTask<UrlMetadataRequest, UrlMetadataResponse>(
+                    taskService = taskService,
+                    task = "url-metadata",
+                    id = DigestUtils.md5Hex(normalizedRequest.url),
+                    request = normalizedRequest,
                 )
-            )
-        }
-    }
 
-    post("/tasks/post-image") {
-        val request: PostImageRequest = call.receive()
-        val task = invokeTask<PostImageRequest, PostImageResponse>(
-            taskService = taskService,
-            task = "post-image",
-            id = request.slug,
-            request = request,
-        )
+                when (task) {
+                    is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
+                    is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
+                    is TaskResult.Success -> call.respond(
+                        UrlMetadataResponse(
+                            title = task.result.title,
+                            icon = task.result.icon?.let { "${env.s3PublicUrl}/remote-icons/$it" },
+                            banner = task.result.banner?.let { "${env.s3PublicUrl}/remote-banners/$it" },
+                        )
+                    )
+                }
+            }
 
-        when (task) {
-            is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
-            is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
-            is TaskResult.Success -> call.respond(
-                PostImageResponse(
-                    bannerImage = "${env.s3PublicUrl}/post-banners/${task.result.bannerImage}",
-                    socialImage = "${env.s3PublicUrl}/post-banners/${task.result.socialImage}",
+            post("/tasks/post-image") {
+                val request: PostImageRequest = call.receive()
+                val task = invokeTask<PostImageRequest, PostImageResponse>(
+                    taskService = taskService,
+                    task = "post-image",
+                    id = request.slug,
+                    request = request,
                 )
-            )
+
+                when (task) {
+                    is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
+                    is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
+                    is TaskResult.Success -> call.respond(
+                        PostImageResponse(
+                            bannerImage = "${env.s3PublicUrl}/post-banners/${task.result.bannerImage}",
+                            socialImage = "${env.s3PublicUrl}/post-banners/${task.result.socialImage}",
+                        )
+                    )
+                }
+            }
         }
     }
 }
 
 val tasksModule = module {
     singleOf(::TaskServiceImpl) bind TaskService::class
+    singleOf(::TaskRoutes) withOptions { createdAtStart() }
 }

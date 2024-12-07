@@ -1,10 +1,10 @@
 [versions]
-kotlin = "1.9.23"
-ktor = "2.3.9"
-koin = "3.5.6"
+kotlin = "2.1.0"
+ktor = "3.0.2"
+koin = "4.1.0-Beta1"
 sqldelight = "2.0.2"
 logback = "1.4.14"
-flyway = "10.12.0"
+flyway = "11.0.1"
 
 [libraries]
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -25,11 +25,11 @@ ktor-server-host-common = { module = "io.ktor:ktor-server-host-common-jvm", vers
 ktor-server-hsts = { module = "io.ktor:ktor-server-hsts-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
-ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
+ktor-server-tests = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+koin-ktor = { module = "io.insert-koin:koin-ktor3", version.ref = "koin" }
 
 bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.78.1" }
 spring-security-crypto = { module = "org.springframework.security:spring-security-crypto", version = "6.2.4" }
@@ -50,6 +50,7 @@ ktor = ["ktor-client-content-negotiation", "ktor-client-core", "ktor-client-apac
     "ktor-server-websockets"]
 
 [plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
