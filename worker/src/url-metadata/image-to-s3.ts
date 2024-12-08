@@ -10,6 +10,7 @@ export async function imageToS3(
 	width: number,
 	bucket: string,
 	key: string,
+	tags: Record<string, string>,
 ): Promise<string> {
 	const request = await fetchAsBrowser(url);
 	const body = request.body;
@@ -20,7 +21,7 @@ export async function imageToS3(
 		const svg = await request.text();
 		const optimizedSvg = svgo.optimize(svg, { multipass: true });
 		const uploadKey = `${key}.svg`
-		await upload(bucket, uploadKey, stream.Readable.from([optimizedSvg]));
+		await upload(bucket, uploadKey, tags, stream.Readable.from([optimizedSvg]));
 		return uploadKey;
 	}
 
@@ -37,6 +38,6 @@ export async function imageToS3(
 	const transformerStream = metadataStream.pipe(transformer);
 
 	const uploadKey = `${key}.${extension}`;
-	await upload(bucket, uploadKey, transformerStream);
+	await upload(bucket, uploadKey, tags, transformerStream);
 	return uploadKey;
 }

@@ -15,13 +15,14 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
+import javax.sql.DataSource
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::configureApplication)
         .start(wait = true)
 }
 
-private val koinModule = module {
+val koinModule = module {
     singleOf(::EnvConfigImpl) bind EnvConfig::class
 
     single {
@@ -30,8 +31,9 @@ private val koinModule = module {
         dataSource.jdbcUrl = "jdbc:" + envConfig.postgresUrl
         dataSource.username = envConfig.postgresUser
         dataSource.password = envConfig.postgresPassword
-        Database(dataSource.asJdbcDriver())
-    }
+        dataSource
+    } bind DataSource::class
+    single { Database(get<DataSource>().asJdbcDriver()) }
 }
 
 fun Application.configureApplication() {

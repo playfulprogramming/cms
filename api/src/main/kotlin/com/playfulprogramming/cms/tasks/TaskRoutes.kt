@@ -72,8 +72,8 @@ class TaskRoutes(
                     is TaskResult.Success -> call.respond(
                         UrlMetadataResponse(
                             title = task.result.title,
-                            icon = task.result.icon?.let { "${env.s3PublicUrl}/remote-icons/$it" },
-                            banner = task.result.banner?.let { "${env.s3PublicUrl}/remote-banners/$it" },
+                            icon = task.result.icon?.let { "${env.s3PublicUrl}/${env.s3Bucket}/$it" },
+                            banner = task.result.banner?.let { "${env.s3PublicUrl}/${env.s3Bucket}/$it" },
                         )
                     )
                 }
@@ -93,8 +93,8 @@ class TaskRoutes(
                     is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
                     is TaskResult.Success -> call.respond(
                         PostImageResponse(
-                            bannerImage = "${env.s3PublicUrl}/post-banners/${task.result.bannerImage}",
-                            socialImage = "${env.s3PublicUrl}/post-banners/${task.result.socialImage}",
+                            bannerImage = "${env.s3PublicUrl}/${env.s3Bucket}/${task.result.bannerImage}",
+                            socialImage = "${env.s3PublicUrl}/${env.s3Bucket}/${task.result.socialImage}",
                         )
                     )
                 }

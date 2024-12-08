@@ -11,5 +11,6 @@ namespace NodeJS {
 		S3_ENDPOINT: string;
 		S3_KEY_ID: string;
 		S3_KEY_SECRET: string;
+		S3_BUCKET: string;
 	}
 }

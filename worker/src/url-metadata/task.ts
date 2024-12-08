@@ -15,8 +15,7 @@ interface UrlMetadataOutput {
 	banner?: string;
 }
 
-export const BUCKET_REMOTE_ICONS = await createBucket("remote-icons");
-export const BUCKET_REMOTE_BANNERS = await createBucket("remote-banners");
+const BUCKET = await createBucket(process.env.S3_BUCKET);
 
 function handleError(name: string): (e: Error) => undefined {
 	return (e) => {
@@ -34,13 +33,15 @@ export async function urlMetadataTask(input: UrlMetadataInput): Promise<UrlMetad
 
 	const title = getPageTitle(root);
 
-	const icon = await fetchPageIcon(url, root)
-		.then(url => imageToS3(url, 24, BUCKET_REMOTE_ICONS, key))
+	const iconPromise = fetchPageIcon(url, root)
+		.then(url => imageToS3(url, 24, BUCKET, `remote-icon-${key}`, { from: "url-metadata/icon", origin: url.origin }))
 		.catch(handleError("fetchPageIcon"));
 
-	const banner = await getOpenGraphImage(url, root)
-		.then(url => imageToS3(url, 896, BUCKET_REMOTE_BANNERS, key))
+	const bannerPromise = getOpenGraphImage(url, root)
+		.then(url => imageToS3(url, 896, BUCKET, `remote-banner-${key}`, { from: "url-metadata/banner", origin: url.origin }))
 		.catch(handleError("getOpenGraphImage"));
+
+	const [icon, banner] = await Promise.all([iconPromise, bannerPromise]);
 
 	return {
 		title,

@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.hikari)
     implementation(libs.postgres)
+    implementation(libs.flyway.postgres)
     implementation(libs.sqldelight.jdbc)
     implementation(libs.bcprov)
     implementation(libs.spring.security.crypto)

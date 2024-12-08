@@ -53,12 +53,15 @@ export async function createBucket(name: string): Promise<string> {
 	return name;
 }
 
-export async function upload(bucket: string, key: string, file: stream.Readable) {
+export async function upload(bucket: string, key: string, tags: Record<string, string>, file: stream.Readable) {
+	const searchParams = new URLSearchParams(tags);
+
 	const upload = new Upload({
 		params: {
 			Bucket: bucket,
 			Key: key,
 			Body: file,
+			Tagging: searchParams.toString(),
 		},
 		client: S3,
 	});
