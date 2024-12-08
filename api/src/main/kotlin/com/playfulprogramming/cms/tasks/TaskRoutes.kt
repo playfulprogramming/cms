@@ -8,6 +8,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.apache.commons.codec.digest.DigestUtils
@@ -55,7 +59,8 @@ class TaskRoutes(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private suspend fun startRandomFlyWorker() {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun startRandomFlyWorker() = GlobalScope.launch(Dispatchers.IO) {
         // Find a suspended or stopped machine
         val machine = flyClient.getMachines(env.flyWorkerAppName)
             .filter { it.state in arrayOf("suspended", "stopped") }
