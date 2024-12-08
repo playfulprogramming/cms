@@ -40,6 +40,7 @@ fun Application.configureApplication() {
     install(Koin) {
         modules(
             koinModule,
+            healthModule,
             tasksModule,
             module {
                 single { this@configureApplication }
