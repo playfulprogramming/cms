@@ -40,3 +40,14 @@ corepack up
 pnpm install
 pnpm run dev
 ```
+
+## Deployment
+
+* The database schema is managed by the API, in `src/main/sqldelight/...`
+    * Migrations are executed by `FlywayMigrate.kt`
+    * When you change the schema locally, you'll need to run `./gradlew runFlywayMigrate` yourself.
+    * This runs automatically on deployment, as a result of fly.io's `RELEASE_COMMAND=1` configuration.
+
+* Object Storage is hosted through [Tigris](https://www.tigrisdata.com/)
+    * It's a public bucket with CORS enabled, so that preview builds (on subdomains) can also use it
+    * This is configured in the `S3_*` environment variables
