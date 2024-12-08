@@ -34,7 +34,7 @@ services:
       - .env
     environment:
       S3_ENDPOINT: http://minio:9000
-      POSTGRES_URL: postgresql://pgsql:5432/unicorn
+      POSTGRES_URL: postgresql://pgsql:5432/postgres
     depends_on:
       - minio
       - pgsql
@@ -44,7 +44,7 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_URL: postgresql://pgsql:5432/unicorn
+      POSTGRES_URL: postgresql://pgsql:5432/postgres
     ports:
       - "8080:8080"
     depends_on:

@@ -9,6 +9,11 @@ object FlywayMigrate {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @JvmStatic
+    fun main(argv: Array<String>) {
+        run()
+    }
+
     fun run() {
         logger.info("Running FlywayMigrate...")
 

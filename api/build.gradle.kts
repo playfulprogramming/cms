@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.flyway)
 }
 
 group = "com.playfulprogramming"
@@ -39,6 +38,12 @@ tasks.run.configure {
     environment.putAll(env)
 }
 
+tasks.create("runFlywayMigrate", JavaExec::class) {
+    environment.putAll(env)
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass = "com.playfulprogramming.cms.FlywayMigrate"
+}
+
 val flywayMigrationDir = layout.buildDirectory.dir("resources/main/migrations")
 
 sqldelight {
@@ -52,28 +57,6 @@ sqldelight {
     }
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath(libs.postgres.get().toString())
-        classpath(libs.flyway.postgres.get().toString())
-    }
-}
-
-flyway {
-    url = "jdbc:${env["POSTGRES_URL"]}"
-    user = env["POSTGRES_USER"]
-    password = env["POSTGRES_PASSWORD"]
-    locations = arrayOf("filesystem:${flywayMigrationDir.get()}")
-}
-
-tasks.flywayMigrate.configure {
-    // SQLDelight needs to actually generate the migration files
-    // before Flyway can use them
-    dependsOn("generateMainDatabaseMigrations")
-}
 tasks.processResources.configure {
     dependsOn("generateMainDatabaseMigrations")
 }
