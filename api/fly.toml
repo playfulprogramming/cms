@@ -9,7 +9,6 @@ primary_region = 'ewr'
 [build]
 
 [deploy]
-  strategy = "bluegreen"
   release_command = "sh -c true"
   release_command_timeout = "5m"
 
