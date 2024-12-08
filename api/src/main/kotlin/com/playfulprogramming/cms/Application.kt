@@ -18,6 +18,13 @@ import org.koin.ktor.plugin.Koin
 import javax.sql.DataSource
 
 fun main() {
+    // Detect if started in a release container; exit immediately
+    // https://fly.io/docs/reference/configuration/#the-deploy-section
+    if (System.getenv("RELEASE_COMMAND") != null) {
+        println("Found RELEASE_COMMAND=1, exiting...")
+        return
+    }
+
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::configureApplication)
         .start(wait = true)
 }
