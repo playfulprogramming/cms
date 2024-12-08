@@ -1,6 +1,7 @@
 package com.playfulprogramming.cms
 
 import app.cash.sqldelight.driver.jdbc.asJdbcDriver
+import com.playfulprogramming.cms.backends.flyio.flyClientModule
 import com.playfulprogramming.cms.config.EnvConfig
 import com.playfulprogramming.cms.config.EnvConfigImpl
 import com.playfulprogramming.cms.plugins.configureHTTP
@@ -48,6 +49,7 @@ fun Application.configureApplication() {
     install(Koin) {
         modules(
             koinModule,
+            flyClientModule,
             healthModule,
             tasksModule,
             module {

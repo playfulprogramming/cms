@@ -1,5 +1,6 @@
 package com.playfulprogramming.cms.tasks
 
+import com.playfulprogramming.cms.backends.flyio.FlyClient
 import com.playfulprogramming.cms.config.EnvConfig
 import com.playfulprogramming.cms.tasks.data.*
 import io.ktor.http.*
@@ -15,6 +16,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.slf4j.LoggerFactory
 import java.net.URI
 
 private val json = Json {
@@ -46,9 +48,26 @@ private suspend inline fun <reified Request: Any, reified Response: Any> invokeT
 
 class TaskRoutes(
     private val taskService: TaskService,
+    private val flyClient: FlyClient,
     private val env: EnvConfig,
     application: Application,
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    private suspend fun startRandomFlyWorker() {
+        // Find a suspended or stopped machine
+        val machine = flyClient.getMachines(env.flyWorkerAppName)
+            .filter { it.state in arrayOf("suspended", "stopped") }
+            .randomOrNull()
+
+        if (machine != null) {
+            // If found, send a command to start it
+            logger.info("Starting machine id=${machine.id} to run task")
+            flyClient.startMachine(env.flyWorkerAppName, machine.id)
+        }
+    }
+
     init {
         application.routing {
             post("/tasks/url-metadata") {
@@ -67,7 +86,10 @@ class TaskRoutes(
                 )
 
                 when (task) {
-                    is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
+                    is TaskResult.Accepted -> {
+                        startRandomFlyWorker()
+                        call.respond(HttpStatusCode.Accepted)
+                    }
                     is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
                     is TaskResult.Success -> call.respond(
                         UrlMetadataResponse(
@@ -89,7 +111,10 @@ class TaskRoutes(
                 )
 
                 when (task) {
-                    is TaskResult.Accepted -> call.respond(HttpStatusCode.Accepted)
+                    is TaskResult.Accepted -> {
+                        startRandomFlyWorker()
+                        call.respond(HttpStatusCode.Accepted)
+                    }
                     is TaskResult.Failed -> call.respond(HttpStatusCode.NotFound)
                     is TaskResult.Success -> call.respond(
                         PostImageResponse(
