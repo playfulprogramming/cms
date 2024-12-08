@@ -72,6 +72,9 @@ tasks.flywayMigrate.configure {
     // before Flyway can use them
     dependsOn("generateMainDatabaseMigrations")
 }
+tasks.processResources.configure {
+    dependsOn("generateMainDatabaseMigrations")
+}
 
 repositories {
     mavenCentral()

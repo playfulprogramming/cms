@@ -18,10 +18,11 @@ import org.koin.ktor.plugin.Koin
 import javax.sql.DataSource
 
 fun main() {
-    // Detect if started in a release container; exit immediately
+    // Detect if started in a release container
     // https://fly.io/docs/reference/configuration/#the-deploy-section
     if (System.getenv("RELEASE_COMMAND") != null) {
-        println("Found RELEASE_COMMAND=1, exiting...")
+        println("Found RELEASE_COMMAND=1, running FlywayMigrate")
+        FlywayMigrate.run()
         return
     }
 

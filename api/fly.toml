@@ -10,7 +10,7 @@ primary_region = 'ewr'
 
 [deploy]
   strategy = "bluegreen"
-  release_command = "/opt/java/openjdk/bin/java -cp /app/server.jar com.playfulprogramming.cms.FlywayMigrate"
+  release_command = "sh -c true"
   release_command_timeout = "5m"
 
 [env]

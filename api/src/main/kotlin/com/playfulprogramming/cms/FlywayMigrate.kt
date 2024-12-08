@@ -9,15 +9,7 @@ object FlywayMigrate {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    /**
-     * Executes as a Fly.io release command to migrate the prod database
-     * to newer versions on deployment.
-     *
-     * Runs with:
-     * java -cp /app/server.jar com.playfulprogramming.cms.FlywayMigrate
-     */
-    @JvmStatic
-    fun main(args: Array<String>) {
+    fun run() {
         logger.info("Running FlywayMigrate...")
 
         val koin = startKoin {
@@ -25,6 +17,8 @@ object FlywayMigrate {
         }
 
         val flyway = Flyway.configure()
+            .locations("migrations")
+            .failOnMissingLocations(true)
             .dataSource(koin.koin.get<DataSource>())
             .load()
 
