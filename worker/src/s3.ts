@@ -1,4 +1,4 @@
-import { BucketAlreadyExists, BucketAlreadyOwnedByYou, CreateBucketCommand, PutBucketPolicyCommand, S3Client } from "@aws-sdk/client-s3";
+import { BucketAlreadyExists, BucketAlreadyOwnedByYou, CreateBucketCommand, GetObjectCommand, NoSuchKey, PutBucketPolicyCommand, S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import * as stream from "stream";
 
@@ -51,6 +51,22 @@ export async function createBucket(name: string): Promise<string> {
 	}
 
 	return name;
+}
+
+export async function exists(bucket: string, key: string): Promise<boolean> {
+	try {
+		const obj = await S3.send(new GetObjectCommand({
+			Bucket: bucket,
+			Key: key,
+		}));
+		return !!obj;
+	} catch (e) {
+		if (e instanceof NoSuchKey) {
+			return false;
+		} else {
+			throw e;
+		}
+	}
 }
 
 export async function upload(bucket: string, key: string, tags: Record<string, string>, file: stream.Readable) {
