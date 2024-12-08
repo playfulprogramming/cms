@@ -10,14 +10,14 @@ primary_region = 'ewr'
 
 [deploy]
   strategy = "bluegreen"
-  release_command = "java -cp /app/server.jar com.playfulprogramming.cms.FlywayMigrate"
+  release_command = "/opt/java/openjdk/bin/java -cp /app/server.jar com.playfulprogramming.cms.FlywayMigrate"
   release_command_timeout = "5m"
 
 [env]
   CLIENT_URL = "https://playfulprogramming.com"
   S3_PUBLIC_URL = "https://fly.storage.tigris.dev"
   S3_BUCKET = "hoof-storage"
-  POSTGRES_URL = "postgresql://hoof-db.internal/unicorn"
+  POSTGRES_URL = "postgresql://hoof-db.internal/postgres"
   FLY_API_URL = "https://_api.internal:4280"
   FLY_WORKER_APP_NAME = "hoof-worker"
   FLY_WORKER_MACHINE_ID = ""

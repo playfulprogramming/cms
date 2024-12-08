@@ -12,7 +12,7 @@ primary_region = 'ewr'
   WORKER_EXIT_WHEN_DONE = 'true'
   S3_ENDPOINT = "https://fly.storage.tigris.dev"
   S3_BUCKET = "hoof-storage"
-  POSTGRES_URL = "postgresql://hoof-db.internal/unicorn"
+  POSTGRES_URL = "postgresql://hoof-db.internal/postgres"
 
 [[vm]]
   memory = '512mb'
