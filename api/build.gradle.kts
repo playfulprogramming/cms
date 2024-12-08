@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.ktor)
@@ -74,6 +76,12 @@ tasks.flywayMigrate.configure {
 }
 tasks.processResources.configure {
     dependsOn("generateMainDatabaseMigrations")
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    // Needed for flyway migrations
+    mergeServiceFiles()
+    archiveBaseName.set("${project.name}-all")
 }
 
 repositories {

@@ -19,6 +19,7 @@ object FlywayMigrate {
         val flyway = Flyway.configure()
             .locations("migrations")
             .failOnMissingLocations(true)
+            .validateMigrationNaming(true)
             .dataSource(koin.koin.get<DataSource>())
             .load()
 
