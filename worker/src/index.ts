@@ -4,7 +4,7 @@ import { setTimeout } from "node:timers/promises";
 
 const BATCH_SIZE = 1;
 
-let hasRequests = true;
+let lastTaskTime = Date.now();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tasks: Record<string, (input: any) => Promise<any>> = {
@@ -12,9 +12,11 @@ const tasks: Record<string, (input: any) => Promise<any>> = {
 };
 
 while (true) {
+	let hadRequests: boolean = false;
+
 	await sql.begin(async tx => {
 		const requests = await tx`SELECT * FROM TaskRequests FOR UPDATE SKIP LOCKED LIMIT ${BATCH_SIZE}`;
-		hasRequests = requests.length > 0;
+		hadRequests = requests.length > 0;
 
 		await Promise.all(requests.map(async request => {
 			console.log(request);
@@ -41,13 +43,21 @@ while (true) {
 		}));
 	});
 
+	if (hadRequests) {
+		lastTaskTime = Date.now();
+	}
+
 	// WORKER_EXIT_WHEN_DONE will be used in production, to avoid running when no tasks are needed
 	// - workers are then manually invoked by the fly.io API on any incoming request
-	if (process.env.WORKER_EXIT_WHEN_DONE && !hasRequests) {
+	if (process.env.WORKER_EXIT_WHEN_DONE && Date.now() - lastTaskTime > 10000) {
+		console.log("10s withou any new tasks; exiting task loop...")
 		break;
 	} else {
-		await setTimeout(1000);
+		await setTimeout(100);
 	}
 }
 
+console.log("Closing sql connection...");
 await sql.end();
+
+console.log("Exiting...");
