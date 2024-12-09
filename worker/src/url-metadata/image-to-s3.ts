@@ -26,6 +26,7 @@ export async function imageToS3(
 		const uploadKey = `${key}-${urlHash}.svg`;
 
 		if (await exists(bucket, uploadKey)) {
+			console.log(`Using existing object for ${uploadKey}`);
 			return uploadKey;
 		} else {
 			await upload(bucket, uploadKey, tags, stream.Readable.from([optimizedSvg]));
@@ -47,6 +48,7 @@ export async function imageToS3(
 
 	const uploadKey = `${key}-${urlHash}.${extension}`;
 	if (await exists(bucket, uploadKey)) {
+		console.log(`Using existing object for ${uploadKey}`);
 		return uploadKey;
 	} else {
 		await upload(bucket, uploadKey, tags, transformerStream);
