@@ -8,10 +8,9 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.apache.commons.codec.digest.DigestUtils
@@ -22,6 +21,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.slf4j.LoggerFactory
 import java.net.URI
+import kotlin.time.Duration.Companion.seconds
 
 private val json = Json {
     encodeDefaults = true
@@ -59,17 +59,30 @@ class TaskRoutes(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    private var startedRandomAt: Instant = Instant.DISTANT_PAST
     @OptIn(DelicateCoroutinesApi::class)
-    private fun startRandomFlyWorker() = GlobalScope.launch(Dispatchers.IO) {
-        // Find a suspended or stopped machine
-        val machine = flyClient.getMachines(env.flyWorkerAppName)
-            .filter { it.state in arrayOf("suspended", "stopped") }
-            .randomOrNull()
+    private fun startRandomFlyWorker() {
+        val now = Clock.System.now()
+        if (now - startedRandomAt < 1.seconds)
+            return
 
-        if (machine != null) {
-            // If found, send a command to start it
-            logger.info("Starting machine id=${machine.id} to run task")
-            flyClient.startMachine(env.flyWorkerAppName, machine.id)
+        startedRandomAt = now
+
+        GlobalScope.launch(Dispatchers.IO) {
+            runCatching {
+                // Find a suspended or stopped machine
+                val machine = flyClient.getMachines(env.flyWorkerAppName)
+                    .filter { it.state in arrayOf("suspended", "stopped") }
+                    .randomOrNull()
+
+                if (machine != null) {
+                    // If found, send a command to start it
+                    logger.info("Starting machine id=${machine.id} to run task")
+                    flyClient.startMachine(env.flyWorkerAppName, machine.id)
+                }
+            }
+                .exceptionOrNull()
+                ?.let { logger.error("Error starting fly worker", it) }
         }
     }
 
