@@ -21,14 +21,16 @@ export async function imageToS3(
 
 	if (path.extname(url.pathname) === ".svg") {
 		// If the image is an svg, optimize with svgo
-		const svg = await request.text();
-		const optimizedSvg = svgo.optimize(svg, { multipass: true }).data;
 		const uploadKey = `${key}-${urlHash}.svg`;
 
 		if (await exists(bucket, uploadKey)) {
 			console.log(`Using existing object for ${uploadKey}`);
+			await body.cancel();
 			return uploadKey;
 		} else {
+			console.log("Optimizing svg...");
+			const svg = await request.text();
+			const optimizedSvg = svgo.optimize(svg, { multipass: true }).data;
 			await upload(bucket, uploadKey, tags, stream.Readable.from([optimizedSvg]), "image/svg+xml");
 			return uploadKey;
 		}
@@ -42,15 +44,15 @@ export async function imageToS3(
 	const extension = metadata.format;
 	if (!extension) throw new Error(`Image format for ${url} could not be found.`);
 
-	// rescale the image to [size]
-	const transformer = sharp().resize(Math.min(width, metadata.width || width));
-	const transformerStream = metadataStream.pipe(transformer);
-
 	const uploadKey = `${key}-${urlHash}.${extension}`;
 	if (await exists(bucket, uploadKey)) {
 		console.log(`Using existing object for ${uploadKey}`);
 		return uploadKey;
 	} else {
+		// rescale the image to [size]
+		const transformer = sharp().resize(Math.min(width, metadata.width || width));
+		const transformerStream = metadataStream.pipe(transformer);
+
 		await upload(bucket, uploadKey, tags, transformerStream, `image/${extension}`);
 		return uploadKey;
 	}

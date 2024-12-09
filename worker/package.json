@@ -8,7 +8,7 @@
   "scripts": {
     "build": "pkgroll",
     "start": "node dist/index.js",
-    "dev": "DOTENV_CONFIG_PATH=../.env tsx -r dotenv/config src/index.ts",
+    "dev": "DOTENV_CONFIG_PATH=../.env tsx --inspect -r dotenv/config src/index.ts",
     "lint": "eslint \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\"",
     "lint:fix": "eslint --cache --fix \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\""
   },
