@@ -29,7 +29,7 @@ export async function imageToS3(
 			console.log(`Using existing object for ${uploadKey}`);
 			return uploadKey;
 		} else {
-			await upload(bucket, uploadKey, tags, stream.Readable.from([optimizedSvg]));
+			await upload(bucket, uploadKey, tags, stream.Readable.from([optimizedSvg]), "image/svg+xml");
 			return uploadKey;
 		}
 	}
@@ -51,7 +51,7 @@ export async function imageToS3(
 		console.log(`Using existing object for ${uploadKey}`);
 		return uploadKey;
 	} else {
-		await upload(bucket, uploadKey, tags, transformerStream);
+		await upload(bucket, uploadKey, tags, transformerStream, `image/${extension}`);
 		return uploadKey;
 	}
 }

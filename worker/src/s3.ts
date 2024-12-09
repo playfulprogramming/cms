@@ -69,7 +69,7 @@ export async function exists(bucket: string, key: string): Promise<boolean> {
 	}
 }
 
-export async function upload(bucket: string, key: string, tags: Record<string, string>, file: stream.Readable) {
+export async function upload(bucket: string, key: string, tags: Record<string, string>, file: stream.Readable, contentType: string) {
 	const searchParams = new URLSearchParams(tags);
 
 	const upload = new Upload({
@@ -77,6 +77,7 @@ export async function upload(bucket: string, key: string, tags: Record<string, s
 			Bucket: bucket,
 			Key: key,
 			Body: file,
+			ContentType: contentType,
 			Tagging: searchParams.toString(),
 		},
 		client: S3,
