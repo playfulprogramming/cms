@@ -22,7 +22,7 @@ export async function imageToS3(
 	if (path.extname(url.pathname) === ".svg") {
 		// If the image is an svg, optimize with svgo
 		const svg = await request.text();
-		const optimizedSvg = svgo.optimize(svg, { multipass: true });
+		const optimizedSvg = svgo.optimize(svg, { multipass: true }).data;
 		const uploadKey = `${key}-${urlHash}.svg`;
 
 		if (await exists(bucket, uploadKey)) {
