@@ -34,3 +34,46 @@ test("Should fetch basic page icon", async () => {
 
 	expect(iconHref).toEqual(new URL("https://example.com/img.png"));
 });
+
+test("Should fetch page icon from manifest as backup", async () => {
+	const pageHtml = `
+<!DOCTYPE html>
+<head>
+	<title>Test</title>
+	<link rel="manifest" href="/manifest.json">
+</head>
+<body>
+	<h1>Test</h1>
+</body>
+</html>
+`.trim();
+
+	const manifest = {
+		icons: [
+			{
+				src: "/manifest-img.png",
+				sizes: "96x96",
+				type: "image/png",
+			},
+		],
+	};
+
+	const domain = "https://example.com/";
+	mockEndpoint({
+		path: domain,
+		body: pageHtml,
+		method: "get",
+		bodyType: "text",
+	});
+	mockEndpoint({
+		path: domain + "manifest.json",
+		body: manifest,
+		method: "get",
+		bodyType: "json",
+	});
+
+	const srcHast = await fetchPageHtml(new URL(domain));
+	const iconHref = await fetchPageIcon(new URL(domain), srcHast!);
+
+	expect(iconHref).toEqual(new URL("https://example.com/manifest-img.png"));
+});
