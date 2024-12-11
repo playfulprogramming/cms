@@ -10,7 +10,13 @@ import { removePositions } from "../../test-utils/hast";
 
 test("Should throw error when 400 status code", async () => {
 	const domain = "https://example.com/test";
-	mockEndpoint({ path: domain, body: "", type: "get", status: 400 });
+	mockEndpoint({
+		path: domain,
+		body: {},
+		method: "get",
+		status: 400,
+		bodyType: "json",
+	});
 	await expect(() => fetchAsBrowser(domain)).rejects.toThrow();
 });
 
@@ -31,6 +37,7 @@ test("should fetch page HTML", async () => {
 	mockEndpoint({
 		path: domain,
 		body: html,
+		bodyType: "text",
 	});
 	const response = await fetchPageHtml(domain);
 	expect(removePositions(response)).toMatchInlineSnapshot(`
@@ -136,6 +143,7 @@ test("should get page title", async () => {
 	mockEndpoint({
 		path: domain,
 		body: html,
+		bodyType: "text",
 	});
 	const root = await fetchPageHtml(domain);
 	const response = await getPageTitle(root!);
@@ -147,6 +155,7 @@ test("Should gather image URL from OpenGraph metadata", async () => {
 	mockEndpoint({
 		path: domain,
 		body: html,
+		bodyType: "text",
 	});
 	const root = await fetchPageHtml(domain);
 	const response = await getOpenGraphImage(new URL(domain), root!);
