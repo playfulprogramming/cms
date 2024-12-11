@@ -19,9 +19,8 @@ export async function fetchAsBrowser(input: string | URL, init?: RequestInit) {
 	return response;
 }
 
-export async function fetchPageHtml(src: URL): Promise<Root | null> {
-	const srcHTML = await fetchAsBrowser(src)
-		.then((r) => r.text());
+export async function fetchPageHtml(src: string | URL): Promise<Root | null> {
+	const srcHTML = await fetchAsBrowser(src).then((r) => r.text());
 
 	const srcHast = fromHtml(srcHTML);
 	return srcHast;
