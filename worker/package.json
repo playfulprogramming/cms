@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "dev": "DOTENV_CONFIG_PATH=../.env tsx --inspect -r dotenv/config src/index.ts",
     "lint": "eslint \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\"",
-    "lint:fix": "eslint --cache --fix \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\""
+    "lint:fix": "eslint --cache --fix \"src/**/*.{js,mjs,ts}\" \"*.{js,mjs,ts}\"",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -25,11 +26,13 @@
     "@typescript-eslint/parser": "^8.17.0",
     "dotenv": "^16.4.7",
     "globals": "^15.13.0",
+    "msw": "^2.6.8",
     "pkgroll": "^2.5.1",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
+    "typescript-eslint": "^8.17.0",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.705.0",
