@@ -1,12 +1,6 @@
 import { mockEndpoint } from "../../test-utils/server";
 import { expect, test } from "vitest";
-import {
-	fetchAsBrowser,
-	fetchPageHtml,
-	getOpenGraphImage,
-	getPageTitle,
-} from "./fetch-page-html";
-import { removePositions } from "../../test-utils/hast";
+import { fetchPageHtml } from "./fetch-page-html";
 import { fetchPageIcon } from "./fetch-page-icon";
 
 test("Should fetch basic page icon", async () => {

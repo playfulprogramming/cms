@@ -1,9 +1,9 @@
 export interface Manifest {
-	name: string;
-	short_name: string;
-	theme_color: string;
-	background_color: string;
-	icons:
+	name?: string;
+	short_name?: string;
+	theme_color?: string;
+	background_color?: string;
+	icons?:
 		| Array<{
 				src: string;
 				// "72x72"
